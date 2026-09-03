@@ -1,11 +1,50 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "../layouts/Layout.astro";
+import RepairCostCalculator from "../components/RepairCostCalculator.astro";
 ---
 
 <Layout>
-	<Welcome />
+  <main class="min-h-screen">
+    <!-- Nav -->
+    <nav class="border-b border-[var(--color-hairline)] bg-[var(--color-elevated)]">
+      <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded bg-[var(--color-ink)] flex items-center justify-center">
+            <span class="text-white text-xs font-bold">W</span>
+          </div>
+          <span class="text-sm font-semibold text-[var(--color-ink)] tracking-tight">Wakefit</span>
+        </div>
+        <span class="text-xs text-[var(--color-muted)] font-mono uppercase tracking-wider">Repair Calculator</span>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="py-12 md:py-16 px-6">
+      <div class="max-w-3xl mx-auto text-center">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[var(--color-hairline)] bg-[var(--color-elevated)] text-xs text-[var(--color-muted)] mb-5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-success)]"></span>
+          Sofa Repair Now Available
+        </div>
+        <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-ink)] leading-tight mb-3">
+          Repair Cost Calculator
+        </h1>
+        <p class="text-base text-[var(--color-body)] max-w-xl mx-auto">
+          Select your product category, SKU, and the issues you're facing to get an instant repair cost estimate.
+        </p>
+      </div>
+    </section>
+
+    <!-- Calculator -->
+    <section class="px-6 pb-16">
+      <RepairCostCalculator />
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--color-hairline)] py-8 px-6">
+      <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-[var(--color-muted)]">
+        <span>© 2026 Wakefit. All rights reserved.</span>
+        <span class="font-mono">Repair Cost Calculator v1.0</span>
+      </div>
+    </footer>
+  </main>
 </Layout>

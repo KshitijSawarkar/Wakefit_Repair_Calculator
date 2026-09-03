@@ -1,0 +1,607 @@
+---
+// RepairCostCalculator.astro - Main interactive calculator component
+---
+
+<div id="calculator-root" class="w-full max-w-3xl mx-auto">
+  <!-- Step 1: Category Selection -->
+  <div id="step-category" class="calc-step">
+    <div class="step-header">
+      <span class="step-number">1</span>
+      <label class="step-label">Select Category</label>
+    </div>
+    <div id="category-pills" class="flex flex-wrap gap-2 mt-3">
+      <button data-category="sofa" class="cat-pill active">Sofa</button>
+      <button data-category="recliner" class="cat-pill" disabled>Recliner</button>
+      <button data-category="wingchair" class="cat-pill" disabled>Wingchair</button>
+      <button data-category="lounger" class="cat-pill" disabled>Lounger Chair</button>
+      <button data-category="upholstery_bed" class="cat-pill" disabled>Upholstery Bed</button>
+    </div>
+    <p class="text-xs text-[var(--color-muted)] mt-2 ml-8">Only Sofa is available now.</p>
+  </div>
+
+  <!-- Step 2: SKU Selection -->
+  <div id="step-sku" class="calc-step">
+    <div class="step-header">
+      <span class="step-number">2</span>
+      <label class="step-label">Select SKU</label>
+    </div>
+
+    <div class="sku-dropdown-wrapper mt-3" id="sku-dropdown-wrapper">
+      <!-- Trigger -->
+      <div id="sku-trigger" class="sku-trigger" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox">
+        <div id="sku-trigger-text" class="sku-trigger-text">Search or select a SKU...</div>
+        <svg class="sku-trigger-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <!-- Dropdown panel -->
+      <div id="sku-dropdown" class="sku-dropdown hidden">
+        <div class="sku-search-wrapper">
+          <svg class="sku-search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M11 11L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input id="sku-search" type="text" class="sku-search-input" placeholder="Type to search SKU, model, fabric..." autocomplete="off" />
+        </div>
+        <ul id="sku-list" class="sku-list" role="listbox"></ul>
+      </div>
+    </div>
+
+    <!-- SKU Info Card -->
+    <div id="sku-info" class="sku-info-card hidden mt-3">
+      <div class="sku-info-header">
+        <span class="sku-info-badge" id="sku-info-badge"></span>
+        <button id="sku-clear" class="sku-clear-btn" title="Clear selection">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 3L11 11M3 11L11 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="sku-info-grid">
+        <div class="sku-info-item">
+          <span class="sku-info-key">Model</span>
+          <span class="sku-info-val" id="sku-model"></span>
+        </div>
+        <div class="sku-info-item">
+          <span class="sku-info-key">Configuration</span>
+          <span class="sku-info-val" id="sku-seater"></span>
+        </div>
+        <div class="sku-info-item">
+          <span class="sku-info-key">Fabric</span>
+          <span class="sku-info-val" id="sku-fabric"></span>
+        </div>
+        <div class="sku-info-item">
+          <span class="sku-info-key">Cloth Required</span>
+          <span class="sku-info-val" id="sku-meters"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Issue Selection -->
+  <div id="step-issues" class="calc-step hidden">
+    <div class="step-header">
+      <span class="step-number">3</span>
+      <label class="step-label">Select Issues</label>
+    </div>
+    <div id="issue-list" class="issue-grid mt-3"></div>
+  </div>
+
+  <!-- Step 4: Cost Summary -->
+  <div id="step-summary" class="calc-step hidden">
+    <div class="step-header">
+      <span class="step-number">4</span>
+      <label class="step-label">Estimated Cost</label>
+    </div>
+    <div class="summary-card mt-3">
+      <div id="cost-breakdown" class="space-y-2 mb-4"></div>
+      <div class="summary-totals">
+        <div class="summary-row">
+          <span class="summary-row-label">Subtotal</span>
+          <span id="subtotal" class="summary-row-value">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-row-label">Logistics</span>
+          <span id="logistics" class="summary-row-value">₹400</span>
+        </div>
+        <div class="summary-total">
+          <span class="summary-total-label">Estimated Total</span>
+          <span id="total-cost" class="summary-total-value">₹0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .calc-step { margin-bottom: 1.5rem; }
+  .step-header { display: flex; align-items: center; gap: 0.625rem; }
+  .step-number {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: var(--color-ink); color: var(--color-elevated);
+    font-size: 0.75rem; font-weight: 600; font-family: var(--font-mono);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .step-label { font-size: 0.875rem; font-weight: 600; color: var(--color-ink); }
+
+  .cat-pill {
+    padding: 0.5rem 1rem; border-radius: 9999px;
+    border: 1px solid var(--color-hairline); background: var(--color-elevated);
+    color: var(--color-ink); font-size: 0.875rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s ease;
+    display: inline-flex; align-items: center; gap: 0.375rem;
+  }
+  .cat-pill:hover:not(:disabled) { border-color: var(--color-ink); }
+  .cat-pill.active { background: var(--color-ink); color: var(--color-elevated); border-color: var(--color-ink); }
+  .cat-pill:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .sku-dropdown-wrapper { position: relative; }
+
+  .sku-trigger {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.625rem 0.875rem; border-radius: 8px;
+    border: 1px solid var(--color-hairline); background: var(--color-elevated);
+    cursor: pointer; transition: all 0.15s ease; min-height: 42px;
+  }
+  .sku-trigger:hover { border-color: var(--color-muted); }
+  .sku-trigger:focus, .sku-trigger.open { border-color: var(--color-ink); outline: none; box-shadow: 0 0 0 3px rgba(23,23,23,0.06); }
+  .sku-trigger-text {
+    font-size: 0.875rem; color: var(--color-muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;
+  }
+  .sku-trigger-text.has-value { color: var(--color-ink); font-weight: 500; font-family: var(--font-mono); }
+  .sku-trigger-icon { color: var(--color-muted); flex-shrink: 0; margin-left: 0.5rem; transition: transform 0.2s ease; }
+  .sku-trigger.open .sku-trigger-icon { transform: rotate(180deg); }
+
+  .sku-dropdown {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 50;
+    background: var(--color-elevated); border: 1px solid var(--color-hairline);
+    border-radius: 10px; overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .sku-search-wrapper {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--color-hairline);
+  }
+  .sku-search-icon { color: var(--color-muted); flex-shrink: 0; }
+  .sku-search-input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 0.875rem; color: var(--color-ink); font-family: var(--font-sans);
+    padding: 0.25rem 0;
+  }
+  .sku-search-input::placeholder { color: var(--color-faint); }
+
+  .sku-list { max-height: 260px; overflow-y: auto; list-style: none; margin: 0; padding: 0.25rem; }
+  .sku-list::-webkit-scrollbar { width: 6px; }
+  .sku-list::-webkit-scrollbar-track { background: transparent; }
+  .sku-list::-webkit-scrollbar-thumb { background: var(--color-hairline); border-radius: 3px; }
+
+  .sku-option {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.5rem 0.625rem; border-radius: 6px; cursor: pointer;
+    transition: background 0.1s ease;
+  }
+  .sku-option:hover, .sku-option.highlighted { background: var(--color-canvas); }
+  .sku-option-code { font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 500; color: var(--color-ink); letter-spacing: -0.02em; }
+  .sku-option-meta { font-size: 0.75rem; color: var(--color-muted); margin-left: auto; white-space: nowrap; }
+  .sku-option-match { background: rgba(0,112,243,0.1); color: var(--color-link); border-radius: 2px; padding: 0 1px; }
+  .sku-no-results { padding: 1.5rem; text-align: center; color: var(--color-muted); font-size: 0.8125rem; }
+
+  .sku-info-card { padding: 0.875rem 1rem; border-radius: 10px; border: 1px solid var(--color-hairline); background: var(--color-canvas); }
+  .sku-info-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.625rem; }
+  .sku-info-badge { font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 600; color: var(--color-ink); letter-spacing: -0.02em; }
+  .sku-clear-btn {
+    width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--color-hairline);
+    background: var(--color-elevated); color: var(--color-muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s ease;
+  }
+  .sku-clear-btn:hover { border-color: var(--color-error); color: var(--color-error); }
+  .sku-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; }
+  .sku-info-item { display: flex; flex-direction: column; gap: 2px; }
+  .sku-info-key { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); font-weight: 500; }
+  .sku-info-val { font-size: 0.8125rem; color: var(--color-ink); font-weight: 500; }
+
+  .issue-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+  .issue-card {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem; border-radius: 10px;
+    border: 1px solid var(--color-hairline); background: var(--color-elevated);
+    cursor: pointer; transition: all 0.15s ease;
+  }
+  .issue-card:hover { border-color: var(--color-muted); }
+  .issue-card.selected { border-color: var(--color-ink); background: #f7f7f7; box-shadow: 0 0 0 3px rgba(23,23,23,0.06); }
+
+  .issue-checkbox {
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 1.5px solid var(--color-hairline); background: var(--color-elevated);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.15s ease;
+  }
+  .issue-card.selected .issue-checkbox { background: var(--color-ink); border-color: var(--color-ink); }
+  .issue-card.selected .issue-checkbox::after { content: "✓"; color: white; font-size: 12px; font-weight: 600; }
+
+  .issue-info { flex: 1; min-width: 0; }
+  .issue-name { font-size: 0.875rem; font-weight: 500; color: var(--color-ink); }
+  .issue-desc { font-size: 0.75rem; color: var(--color-muted); margin-top: 1px; }
+  .issue-price { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-muted); white-space: nowrap; }
+
+  .qty-control { display: flex; align-items: center; gap: 0.375rem; flex-shrink: 0; }
+  .qty-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    border: 1px solid var(--color-hairline); background: var(--color-elevated);
+    color: var(--color-ink); font-size: 1rem; font-weight: 500;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease;
+  }
+  .qty-btn:hover { border-color: var(--color-ink); background: var(--color-ink); color: var(--color-elevated); }
+  .qty-value { width: 1.75rem; text-align: center; font-size: 0.875rem; font-weight: 600; color: var(--color-ink); font-family: var(--font-mono); }
+
+  .summary-card { padding: 1.25rem; border-radius: 12px; border: 1px solid var(--color-hairline); background: var(--color-elevated); }
+  .summary-totals { border-top: 1px solid var(--color-hairline); padding-top: 0.75rem; }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; }
+  .summary-row-label { font-size: 0.8125rem; color: var(--color-muted); }
+  .summary-row-value { font-size: 0.8125rem; font-weight: 500; color: var(--color-ink); font-family: var(--font-mono); }
+  .summary-total { display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; margin-top: 0.375rem; border-top: 1px solid var(--color-hairline); }
+  .summary-total-label { font-size: 0.9375rem; font-weight: 600; color: var(--color-ink); }
+  .summary-total-value { font-size: 1.125rem; font-weight: 700; color: var(--color-ink); font-family: var(--font-mono); }
+
+  .breakdown-item { padding: 0.625rem 0.75rem; border-radius: 8px; background: var(--color-canvas); border: 1px solid var(--color-hairline); }
+  .breakdown-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+  .breakdown-name { font-size: 0.8125rem; font-weight: 500; color: var(--color-ink); }
+  .breakdown-total { font-size: 0.8125rem; font-weight: 600; color: var(--color-ink); font-family: var(--font-mono); }
+  .breakdown-details { font-size: 0.6875rem; color: var(--color-muted); }
+
+  .hidden { display: none !important; }
+</style>
+
+<script>
+  import {
+    CATEGORIES,
+    getFabricByCode,
+    getSeaterByCode,
+    calculateRepairCost,
+    FABRIC_SERIES,
+    SEATER_CONFIGS,
+    type Category,
+    type SKU,
+    type IssueSelection,
+  } from "../data/database";
+
+  let selectedCategory: Category | null = null;
+  let selectedSKU: SKU | null = null;
+  let selections: IssueSelection[] = [];
+  let quantities: Record<string, number> = {};
+  let highlightedIndex = -1;
+  let filteredSKUs: SKU[] = [];
+  let dropdownOpen = false;
+
+  function el(id: string): HTMLElement {
+    return document.getElementById(id) as HTMLElement;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    selectedCategory = CATEGORIES.find((c) => c.id === "sofa") || null;
+    setupCategoryPills();
+    setupSKUDropdown();
+    setupIssues();
+    updateView();
+  });
+
+  // ─── Category ────────────────────────────────────────
+  function setupCategoryPills() {
+    document.querySelectorAll<HTMLButtonElement>(".cat-pill").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        document.querySelectorAll(".cat-pill").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedCategory = CATEGORIES.find((c) => c.id === btn.dataset.category!) || null;
+        selectedSKU = null;
+        selections = [];
+        quantities = {};
+        resetSKUDropdown();
+        setupIssues();
+        updateView();
+      });
+    });
+  }
+
+  // ─── SKU Dropdown ────────────────────────────────────
+  function setupSKUDropdown() {
+    const trigger = el("sku-trigger");
+    const dropdown = el("sku-dropdown");
+    const search = el("sku-search") as HTMLInputElement;
+    const list = el("sku-list");
+    const wrapper = el("sku-dropdown-wrapper");
+    const clearBtn = el("sku-clear");
+
+    filteredSKUs = selectedCategory?.skus || [];
+    renderSKUList(filteredSKUs);
+
+    // Toggle on trigger click
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (dropdownOpen) closeSKUDropdown();
+      else openSKUDropdown();
+    });
+
+    trigger.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openSKUDropdown(); }
+      if (e.key === "Escape") closeSKUDropdown();
+    });
+
+    // Search input
+    search.addEventListener("input", () => {
+      const q = search.value.toLowerCase().trim();
+      if (!selectedCategory) return;
+      filteredSKUs = selectedCategory.skus.filter((sku) => {
+        return !q || sku.fullCode.toLowerCase().includes(q);
+      });
+      highlightedIndex = filteredSKUs.length > 0 ? 0 : -1;
+      renderSKUList(filteredSKUs);
+    });
+
+    search.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        highlightedIndex = Math.min(highlightedIndex + 1, filteredSKUs.length - 1);
+        updateHighlight();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        highlightedIndex = Math.max(highlightedIndex - 1, 0);
+        updateHighlight();
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (highlightedIndex >= 0 && highlightedIndex < filteredSKUs.length) {
+          selectSKU(filteredSKUs[highlightedIndex]);
+        }
+      } else if (e.key === "Escape") {
+        closeSKUDropdown();
+      }
+    });
+
+    // Click outside
+    document.addEventListener("click", (e) => {
+      if (!wrapper.contains(e.target as Node)) {
+        closeSKUDropdown();
+      }
+    });
+
+    // Clear button
+    clearBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selectedSKU = null;
+      selections = [];
+      quantities = {};
+      resetSKUDropdown();
+      el("step-issues").classList.add("hidden");
+      el("step-summary").classList.add("hidden");
+      setupIssues();
+    });
+  }
+
+  function openSKUDropdown() {
+    dropdownOpen = true;
+    const trigger = el("sku-trigger");
+    const dropdown = el("sku-dropdown");
+    const search = el("sku-search") as HTMLInputElement;
+    trigger.classList.add("open");
+    trigger.setAttribute("aria-expanded", "true");
+    dropdown.classList.remove("hidden");
+    search.value = "";
+    search.focus();
+    filteredSKUs = selectedCategory?.skus || [];
+    highlightedIndex = -1;
+    renderSKUList(filteredSKUs);
+  }
+
+  function closeSKUDropdown() {
+    dropdownOpen = false;
+    const trigger = el("sku-trigger");
+    const dropdown = el("sku-dropdown");
+    trigger.classList.remove("open");
+    trigger.setAttribute("aria-expanded", "false");
+    dropdown.classList.add("hidden");
+  }
+
+  function resetSKUDropdown() {
+    const triggerText = el("sku-trigger-text");
+    triggerText.textContent = "Search or select a SKU...";
+    triggerText.classList.remove("has-value");
+    el("sku-info").classList.add("hidden");
+    closeSKUDropdown();
+    filteredSKUs = selectedCategory?.skus || [];
+  }
+
+  function selectSKU(sku: SKU) {
+    selectedSKU = sku;
+    const triggerText = el("sku-trigger-text");
+    triggerText.textContent = sku.fullCode;
+    triggerText.classList.add("has-value");
+    closeSKUDropdown();
+    showSKUInfo();
+    el("step-issues").classList.remove("hidden");
+    selections = [];
+    quantities = {};
+    setupIssues();
+    updateView();
+  }
+
+  function renderSKUList(skus: SKU[]) {
+    const list = el("sku-list");
+    const searchVal = (el("sku-search") as HTMLInputElement).value.toLowerCase().trim();
+
+    if (skus.length === 0) {
+      list.innerHTML = '<li class="sku-no-results">No SKUs found</li>';
+      return;
+    }
+
+    list.innerHTML = skus.map((sku, i) => {
+      const code = highlightMatch(sku.fullCode, searchVal);
+      const highlightedClass = i === highlightedIndex ? " highlighted" : "";
+      return `<li class="sku-option${highlightedClass}" data-index="${i}" role="option"><span class="sku-option-code">${code}</span></li>`;
+    }).join("");
+
+    list.querySelectorAll<HTMLElement>(".sku-option").forEach((opt) => {
+      opt.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        const idx = parseInt(opt.dataset.index || "0", 10);
+        if (idx >= 0 && idx < skus.length) selectSKU(skus[idx]);
+      });
+      opt.addEventListener("mouseenter", () => {
+        highlightedIndex = parseInt(opt.dataset.index || "0", 10);
+        updateHighlight();
+      });
+    });
+  }
+
+  function highlightMatch(text: string, query: string): string {
+    if (!query) return text;
+    const idx = text.toLowerCase().indexOf(query);
+    if (idx === -1) return text;
+    return text.slice(0, idx) + '<span class="sku-option-match">' + text.slice(idx, idx + query.length) + '</span>' + text.slice(idx + query.length);
+  }
+
+  function updateHighlight() {
+    document.querySelectorAll<HTMLElement>(".sku-option").forEach((el, i) => {
+      el.classList.toggle("highlighted", i === highlightedIndex);
+    });
+    const item = document.querySelectorAll<HTMLElement>(".sku-option")[highlightedIndex];
+    if (item) item.scrollIntoView({ block: "nearest" });
+  }
+
+  // ─── SKU Info ────────────────────────────────────────
+  function showSKUInfo() {
+    if (!selectedSKU) return;
+    const code = selectedSKU.fullCode;
+
+    // Try to find fabric code in the SKU
+    let fabric = null;
+    for (const fc of FABRIC_SERIES) {
+      if (code.includes(fc.code)) {
+        fabric = fc;
+        break;
+      }
+    }
+
+    // Try to find seater code in the SKU
+    let seater = null;
+    for (const sc of SEATER_CONFIGS) {
+      if (code.includes(sc.code)) {
+        seater = sc;
+        break;
+      }
+    }
+
+    el("sku-info-badge").textContent = code;
+    el("sku-model").textContent = code.substring(4, 7) || "—";
+    el("sku-seater").textContent = seater ? `${seater.code} — ${seater.sections.map(s => s.label).join(" + ")}` : "—";
+    el("sku-fabric").textContent = fabric ? `${fabric.fullName} — ₹${fabric.pricePerMeter}/m` : "—";
+    el("sku-meters").textContent = seater ? `${seater.totalMeters} meters` : "—";
+    el("sku-info").classList.remove("hidden");
+  }
+
+  // ─── Issues ──────────────────────────────────────────
+  function setupIssues() {
+    const list = el("issue-list");
+    list.innerHTML = "";
+    if (!selectedCategory) return;
+
+    // Try to extract fabric and seater from SKU
+    let fabric = null;
+    let seater = null;
+    if (selectedSKU) {
+      for (const fc of FABRIC_SERIES) {
+        if (selectedSKU.fullCode.includes(fc.code)) { fabric = fc; break; }
+      }
+      for (const sc of SEATER_CONFIGS) {
+        if (selectedSKU.fullCode.includes(sc.code)) { seater = sc; break; }
+      }
+    }
+    const fabricTotal = (fabric?.pricePerMeter || 0) * (seater?.totalMeters || 0);
+
+    selectedCategory.issues.forEach((issue) => {
+      if (issue.hasQuantity && !quantities[issue.id]) quantities[issue.id] = 1;
+
+      const card = document.createElement("div");
+      card.className = "issue-card";
+      card.dataset.issueId = issue.id;
+
+      let priceText = "";
+      if (issue.costType === "fabric_based") priceText = `~₹${fabricTotal.toLocaleString("en-IN")} + Labour`;
+      else if (issue.costType === "sagging") priceText = `~₹${(fabricTotal + (seater?.totalFoamPrice || 0)).toLocaleString("en-IN")} + Labour`;
+      else priceText = `₹${issue.unitCost.toLocaleString("en-IN")} + ₹${issue.labourCost.toLocaleString("en-IN")} Labour`;
+
+      let qtyHTML = "";
+      if (issue.hasQuantity) {
+        qtyHTML = `<div class="qty-control"><button class="qty-btn" data-action="dec" data-id="${issue.id}">−</button><span class="qty-value" id="qty-${issue.id}">${quantities[issue.id]}</span><button class="qty-btn" data-action="inc" data-id="${issue.id}">+</button></div>`;
+      }
+
+      card.innerHTML = `<div class="issue-checkbox"></div><div class="issue-info"><div class="issue-name">${issue.name}</div><div class="issue-desc">${issue.description}</div></div><span class="issue-price">${priceText}</span>${qtyHTML}`;
+
+      card.addEventListener("click", (e) => {
+        if ((e.target as HTMLElement).closest(".qty-btn")) return;
+        toggleIssue(issue.id, card);
+      });
+      list.appendChild(card);
+    });
+
+    list.querySelectorAll<HTMLButtonElement>(".qty-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id!;
+        if (btn.dataset.action === "inc") quantities[id] = (quantities[id] || 1) + 1;
+        else if (btn.dataset.action === "dec" && (quantities[id] || 1) > 1) quantities[id]!--;
+        const qtyEl = document.getElementById(`qty-${id}`);
+        if (qtyEl) qtyEl.textContent = String(quantities[id]);
+        const sel = selections.find((s) => s.issueId === id);
+        if (sel) sel.quantity = quantities[id];
+        updateView();
+      });
+    });
+  }
+
+  function toggleIssue(issueId: string, card: HTMLElement) {
+    const idx = selections.findIndex((s) => s.issueId === issueId);
+    if (idx >= 0) {
+      selections.splice(idx, 1);
+      card.classList.remove("selected");
+    } else {
+      selections.push({ issueId, quantity: quantities[issueId] || 1 });
+      card.classList.add("selected");
+    }
+    updateView();
+  }
+
+  // ─── Summary ─────────────────────────────────────────
+  function updateView() {
+    const summaryEl = el("step-summary");
+    if (!selectedCategory || !selectedSKU || selections.length === 0) {
+      summaryEl.classList.add("hidden");
+      return;
+    }
+    summaryEl.classList.remove("hidden");
+
+    const result = calculateRepairCost(selectedCategory, selectedSKU, selections);
+    const breakdownEl = el("cost-breakdown");
+    breakdownEl.innerHTML = "";
+
+    result.breakdown.forEach((item) => {
+      const div = document.createElement("div");
+      div.className = "breakdown-item";
+      let details = "";
+      if (item.fabricCost > 0) details += `Fabric: ₹${item.fabricCost.toLocaleString("en-IN")} `;
+      if (item.foamCost > 0) details += `Foam: ₹${item.foamCost.toLocaleString("en-IN")} `;
+      if (item.unitCost > 0) details += `Parts: ₹${item.unitCost.toLocaleString("en-IN")} `;
+      if (item.labourCost > 0) details += `Labour: ₹${item.labourCost.toLocaleString("en-IN")}`;
+      if (item.quantity > 1) details += ` ×${item.quantity}`;
+      div.innerHTML = `<div class="breakdown-header"><span class="breakdown-name">${item.issueName}</span><span class="breakdown-total">₹${item.total.toLocaleString("en-IN")}</span></div><div class="breakdown-details">${details.trim()}</div>`;
+      breakdownEl.appendChild(div);
+    });
+
+    el("subtotal").textContent = `₹${result.subtotal.toLocaleString("en-IN")}`;
+    el("logistics").textContent = `₹${result.logistics.toLocaleString("en-IN")}`;
+    el("total-cost").textContent = `₹${result.total.toLocaleString("en-IN")}`;
+  }
+</script>
