@@ -86,16 +86,15 @@
       <label class="step-label">What needs fixing?</label>
       <span id="issue-count" class="issue-count-badge hidden">0 selected</span>
     </div>
-    <p class="text-xs text-[var(--color-muted)] mt-1 ml-8">Select all issues that apply</p>
-    <div id="issue-list" class="issue-grid mt-3"></div>
-    <!-- Sticky selection bar -->
-    <div id="issue-bar" class="issue-bar hidden">
-      <div class="issue-bar-inner">
-        <div class="issue-bar-left">
-          <span id="bar-count" class="issue-bar-count">0</span>
-          <span class="issue-bar-label">issues selected</span>
+    <p class="text-xs text-[var(--color-muted)] mt-1 ml-8">Select all that apply</p>
+    <div id="issue-list" class="mt-3 flex flex-col rounded-xl border border-[var(--color-hairline)] bg-[var(--color-elevated)] overflow-hidden"></div>
+    <div id="issue-bar" class="hidden sticky bottom-0 left-0 right-0 z-40 mt-3 pt-3 bg-gradient-to-t from-[var(--color-elevated)] to-transparent">
+      <div class="flex items-center justify-between px-4 py-2.5 rounded-xl bg-[var(--color-ink)] text-[var(--color-elevated)] shadow-[0_4px_16px_rgba(0,0,0,0.15)]">
+        <div class="flex items-center gap-1.5">
+          <span id="bar-count" class="font-mono text-base font-bold">0</span>
+          <span class="text-sm font-medium opacity-80">issues selected</span>
         </div>
-        <button id="bar-continue" class="issue-bar-btn">Continue →</button>
+        <button id="bar-continue" class="px-5 py-2 rounded-lg border border-white/25 bg-transparent text-[var(--color-elevated)] text-sm font-semibold cursor-pointer hover:bg-white/10 transition-all">Continue →</button>
       </div>
     </div>
   </div>
@@ -220,161 +219,6 @@
     background: var(--color-ink); color: var(--color-elevated);
     font-size: 0.6875rem; font-weight: 600; font-family: var(--font-mono);
   }
-
-  /* Group headers */
-  .issue-group { margin-bottom: 0.75rem; }
-  .issue-group:last-child { margin-bottom: 0; }
-  .issue-group-header {
-    display: flex; align-items: center; gap: 0.5rem;
-    margin-bottom: 0.5rem; padding-left: 0.125rem;
-  }
-  .issue-group-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  }
-  .issue-group-dot--fabric { background: #f59e0b; }
-  .issue-group-dot--structural { background: #3b82f6; }
-  .issue-group-dot--comfort { background: #8b5cf6; }
-  .issue-group-dot--repair { background: #ec4899; }
-  .issue-group-title {
-    font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.06em; color: var(--color-muted);
-  }
-  .issue-group-line {
-    flex: 1; height: 1px; background: var(--color-hairline);
-  }
-
-  /* Grid */
-  .issue-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
-  }
-  @media (max-width: 640px) {
-    .issue-grid { grid-template-columns: 1fr; }
-  }
-
-  /* Card */
-  .issue-card {
-    display: flex; flex-direction: column; gap: 0.625rem;
-    padding: 0.875rem 1rem; border-radius: 12px;
-    border: 1px solid var(--color-hairline); background: var(--color-elevated);
-    cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden;
-  }
-  .issue-card::after {
-    content: ""; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
-    border-radius: 0 2px 2px 0; opacity: 0; transition: opacity 0.2s ease;
-  }
-  .issue-card[data-group="fabric"]::after { background: #f59e0b; }
-  .issue-card[data-group="structural"]::after { background: #3b82f6; }
-  .issue-card[data-group="comfort"]::after { background: #8b5cf6; }
-  .issue-card[data-group="repair"]::after { background: #ec4899; }
-  .issue-card:hover { border-color: #d0d0d0; }
-  .issue-card.selected { border-color: var(--color-ink); background: #fafafa; }
-  .issue-card.selected::after { opacity: 1; }
-
-  /* Card top row: icon + text + checkbox */
-  .issue-card-top { display: flex; align-items: flex-start; gap: 0.625rem; }
-  .issue-icon {
-    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 1rem;
-  }
-  .issue-icon--fabric { background: #fef3c7; }
-  .issue-icon--structural { background: #dbeafe; }
-  .issue-icon--comfort { background: #ede9fe; }
-  .issue-icon--repair { background: #fce7f3; }
-
-  .issue-text { flex: 1; min-width: 0; }
-  .issue-name { font-size: 0.8125rem; font-weight: 600; color: var(--color-ink); line-height: 1.3; }
-  .issue-desc {
-    font-size: 0.6875rem; color: var(--color-muted); margin-top: 0.125rem;
-    line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical; overflow: hidden;
-  }
-
-  .issue-checkbox {
-    width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; margin-top: 1px;
-    border: 1.5px solid var(--color-hairline); background: var(--color-elevated);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s ease;
-  }
-  .issue-card.selected .issue-checkbox {
-    background: var(--color-ink); border-color: var(--color-ink);
-    animation: checkPop 0.2s ease;
-  }
-  .issue-card.selected .issue-checkbox::after {
-    content: ""; width: 5px; height: 9px;
-    border: solid white; border-width: 0 1.5px 1.5px 0;
-    transform: rotate(45deg) translateY(-1px);
-  }
-  @keyframes checkPop { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
-
-  /* Card bottom row: price + qty */
-  .issue-card-bottom { display: flex; align-items: center; justify-content: space-between; padding-left: calc(36px + 0.625rem); }
-  .issue-price-tag {
-    padding: 0.1875rem 0.4375rem; border-radius: 5px;
-    background: var(--color-canvas); border: 1px solid var(--color-hairline);
-    font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500;
-    color: var(--color-muted); white-space: nowrap; letter-spacing: -0.01em;
-  }
-  .issue-card.selected .issue-price-tag {
-    background: var(--color-ink); color: var(--color-elevated); border-color: var(--color-ink);
-  }
-
-  .qty-control {
-    display: flex; align-items: center; gap: 0.125rem;
-    background: var(--color-canvas); border: 1px solid var(--color-hairline);
-    border-radius: 7px; padding: 0.0625rem;
-  }
-  .qty-btn {
-    width: 24px; height: 24px; border-radius: 5px;
-    border: none; background: transparent;
-    color: var(--color-ink); font-size: 0.8125rem; font-weight: 500;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s ease;
-  }
-  .qty-btn:hover { background: var(--color-ink); color: var(--color-elevated); }
-  .qty-value {
-    width: 1.25rem; text-align: center; font-size: 0.75rem;
-    font-weight: 700; color: var(--color-ink); font-family: var(--font-mono);
-  }
-
-  /* Sticky bar */
-  .issue-bar {
-    position: sticky; bottom: 0; left: 0; right: 0; z-index: 40;
-    margin-top: 0.75rem; padding: 0.75rem 0;
-    background: linear-gradient(to top, var(--color-elevated) 70%, transparent);
-  }
-  .issue-bar-inner {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.625rem 1rem; border-radius: 10px;
-    background: var(--color-ink); color: var(--color-elevated);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  }
-  .issue-bar-left { display: flex; align-items: center; gap: 0.375rem; }
-  .issue-bar-count {
-    font-family: var(--font-mono); font-size: 1rem; font-weight: 700;
-  }
-  .issue-bar-label { font-size: 0.8125rem; font-weight: 500; opacity: 0.8; }
-  .issue-bar-btn {
-    padding: 0.5rem 1.25rem; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.25);
-    background: transparent; color: var(--color-elevated);
-    font-size: 0.8125rem; font-weight: 600; cursor: pointer;
-    transition: all 0.15s ease;
-  }
-  .issue-bar-btn:hover { background: rgba(255,255,255,0.12); }
-
-  .summary-card { padding: 1.25rem; border-radius: 12px; border: 1px solid var(--color-hairline); background: var(--color-elevated); }
-  .summary-totals { border-top: 1px solid var(--color-hairline); padding-top: 0.75rem; }
-  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; }
-  .summary-row-label { font-size: 0.8125rem; color: var(--color-muted); }
-  .summary-row-value { font-size: 0.8125rem; font-weight: 500; color: var(--color-ink); font-family: var(--font-mono); }
-  .summary-total { display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; margin-top: 0.375rem; border-top: 1px solid var(--color-hairline); }
-  .summary-total-label { font-size: 0.9375rem; font-weight: 600; color: var(--color-ink); }
-  .summary-total-value { font-size: 1.125rem; font-weight: 700; color: var(--color-ink); font-family: var(--font-mono); }
-
-  .breakdown-item { padding: 0.625rem 0.75rem; border-radius: 8px; background: var(--color-canvas); border: 1px solid var(--color-hairline); }
-  .breakdown-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-  .breakdown-name { font-size: 0.8125rem; font-weight: 500; color: var(--color-ink); }
-  .breakdown-total { font-size: 0.8125rem; font-weight: 600; color: var(--color-ink); font-family: var(--font-mono); }
-  .breakdown-details { font-size: 0.6875rem; color: var(--color-muted); }
 
   .hidden { display: none !important; }
 </style>
@@ -630,17 +474,6 @@
   }
 
   // ─── Issues ──────────────────────────────────────────
-  const ISSUE_META: Record<string, { icon: string; iconCls: string; group: string; groupLabel: string }> = {
-    fabric_replacement:   { icon: "🧵", iconCls: "issue-icon--fabric",     group: "fabric",     groupLabel: "Upholstery" },
-    sagging:              { icon: "⬇️",  iconCls: "issue-icon--comfort",    group: "comfort",    groupLabel: "Comfort & Cushion" },
-    leg_replacement:      { icon: "🪵",  iconCls: "issue-icon--structural", group: "structural", groupLabel: "Structural" },
-    frame_repair:         { icon: "🔨",  iconCls: "issue-icon--structural", group: "structural", groupLabel: "Structural" },
-    stitching_repair:     { icon: "🪡",  iconCls: "issue-icon--repair",     group: "repair",     groupLabel: "Repair & Stitching" },
-    cushion_repair:       { icon: "🛋️",  iconCls: "issue-icon--comfort",    group: "comfort",    groupLabel: "Comfort & Cushion" },
-    armrest_repair:       { icon: "💪",  iconCls: "issue-icon--repair",     group: "repair",     groupLabel: "Repair & Stitching" },
-  };
-  const GROUP_ORDER = ["fabric", "structural", "comfort", "repair"];
-
   function setupIssues() {
     const list = el("issue-list");
     list.innerHTML = "";
@@ -654,77 +487,36 @@
     }
     const fabricTotal = (fabric?.pricePerMeter || 0) * (seater?.totalMeters || 0);
 
-    // Group issues
-    const groups: Record<string, typeof selectedCategory.issues> = {};
     for (const issue of selectedCategory.issues) {
-      const meta = ISSUE_META[issue.id];
-      const g = meta?.group || "repair";
-      if (!groups[g]) groups[g] = [];
-      groups[g].push(issue);
-    }
+      if (issue.hasQuantity && !quantities[issue.id]) quantities[issue.id] = 1;
 
-    for (const groupId of GROUP_ORDER) {
-      const issues = groups[groupId];
-      if (!issues || issues.length === 0) continue;
+      let priceText = "";
+      if (issue.costType === "fabric_based") priceText = `~₹${fabricTotal.toLocaleString("en-IN")}`;
+      else if (issue.costType === "sagging") priceText = `~₹${(fabricTotal + (seater?.totalFoamPrice || 0)).toLocaleString("en-IN")}`;
+      else priceText = `₹${issue.unitCost.toLocaleString("en-IN")}`;
 
-      const groupMeta = ISSUE_META[issues[0].id];
-      const groupEl = document.createElement("div");
-      groupEl.className = "issue-group";
-      groupEl.innerHTML = `
-        <div class="issue-group-header">
-          <span class="issue-group-dot issue-group-dot--${groupId}"></span>
-          <span class="issue-group-title">${groupMeta?.groupLabel || groupId}</span>
-          <span class="issue-group-line"></span>
-        </div>
-      `;
-
-      const gridEl = document.createElement("div");
-      gridEl.className = "issue-grid";
-
-      for (const issue of issues) {
-        if (issue.hasQuantity && !quantities[issue.id]) quantities[issue.id] = 1;
-        const meta = ISSUE_META[issue.id] || { icon: "❓", iconCls: "issue-icon--repair", group: "repair", groupLabel: "Other" };
-
-        let priceText = "";
-        if (issue.costType === "fabric_based") priceText = `~₹${fabricTotal.toLocaleString("en-IN")} + labour`;
-        else if (issue.costType === "sagging") priceText = `~₹${(fabricTotal + (seater?.totalFoamPrice || 0)).toLocaleString("en-IN")} + labour`;
-        else priceText = `₹${issue.unitCost.toLocaleString("en-IN")} + ₹${issue.labourCost.toLocaleString("en-IN")} labour`;
-
-        let qtyHTML = "";
-        if (issue.hasQuantity) {
-          qtyHTML = `<div class="qty-control"><button class="qty-btn" data-action="dec" data-id="${issue.id}">−</button><span class="qty-value" id="qty-${issue.id}">${quantities[issue.id]}</span><button class="qty-btn" data-action="inc" data-id="${issue.id}">+</button></div>`;
-        }
-
-        const card = document.createElement("div");
-        card.className = "issue-card";
-        card.dataset.issueId = issue.id;
-        card.dataset.group = groupId;
-        card.innerHTML = `
-          <div class="issue-card-top">
-            <div class="issue-icon ${meta.iconCls}">${meta.icon}</div>
-            <div class="issue-text">
-              <div class="issue-name">${issue.name}</div>
-              <div class="issue-desc">${issue.description}</div>
-            </div>
-            <div class="issue-checkbox"></div>
-          </div>
-          <div class="issue-card-bottom">
-            <span class="issue-price-tag">${priceText}</span>
-            ${qtyHTML}
-          </div>
-        `;
-        card.addEventListener("click", (e) => {
-          if ((e.target as HTMLElement).closest(".qty-btn")) return;
-          toggleIssue(issue.id, card);
-        });
-        gridEl.appendChild(card);
+      let qtyHTML = "";
+      if (issue.hasQuantity) {
+        qtyHTML = `<div style="display:flex;align-items:center;gap:0.125rem;background:var(--color-canvas);border:1px solid var(--color-hairline);border-radius:6px;padding:0.0625rem;flex-shrink:0;" data-qty-for="${issue.id}"><button class="qty-btn" data-action="dec" data-id="${issue.id}" style="width:22px;height:22px;border-radius:4px;border:none;background:transparent;color:var(--color-ink);font-size:0.75rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button><span style="width:1.125rem;text-align:center;font-size:0.6875rem;font-weight:700;color:var(--color-ink);font-family:var(--font-mono);" id="qty-${issue.id}">${quantities[issue.id]}</span><button class="qty-btn" data-action="inc" data-id="${issue.id}" style="width:22px;height:22px;border-radius:4px;border:none;background:transparent;color:var(--color-ink);font-size:0.75rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button></div>`;
       }
 
-      groupEl.appendChild(gridEl);
-      list.appendChild(groupEl);
+      const item = document.createElement("div");
+      item.className = "issue-todo-item";
+      item.dataset.issueId = issue.id;
+      item.style.cssText = "display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;cursor:pointer;transition:background 0.1s ease;border-bottom:1px solid var(--color-hairline);";
+      item.innerHTML = `
+        <div class="issue-todo-check" style="width:20px;height:20px;border-radius:5px;flex-shrink:0;border:1.5px solid var(--color-hairline);background:var(--color-elevated);display:flex;align-items:center;justify-content:center;transition:all 0.15s ease;"></div>
+        <span style="flex:1;font-size:0.8125rem;font-weight:500;color:var(--color-ink);">${issue.name}</span>
+        <span style="font-family:var(--font-mono);font-size:0.6875rem;font-weight:500;color:var(--color-muted);white-space:nowrap;">${priceText}</span>
+        ${qtyHTML}
+      `;
+      item.addEventListener("click", (e) => {
+        if ((e.target as HTMLElement).closest(".qty-btn")) return;
+        toggleIssue(issue.id, item);
+      });
+      list.appendChild(item);
     }
 
-    // Qty button listeners
     list.querySelectorAll<HTMLButtonElement>(".qty-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -740,14 +532,23 @@
     });
   }
 
-  function toggleIssue(issueId: string, card: HTMLElement) {
+  function toggleIssue(issueId: string, item: HTMLElement) {
     const idx = selections.findIndex((s) => s.issueId === issueId);
+    const check = item.querySelector(".issue-todo-check") as HTMLElement;
+    const nameEl = item.querySelector("span:first-of-type") as HTMLElement;
+    const priceEl = item.querySelector("span:nth-of-type(2)") as HTMLElement;
     if (idx >= 0) {
       selections.splice(idx, 1);
-      card.classList.remove("selected");
+      item.style.background = "";
+      if (check) { check.style.background = "var(--color-elevated)"; check.style.borderColor = "var(--color-hairline)"; check.innerHTML = ""; }
+      if (nameEl) nameEl.style.fontWeight = "500";
+      if (priceEl) priceEl.style.color = "var(--color-muted)";
     } else {
       selections.push({ issueId, quantity: quantities[issueId] || 1 });
-      card.classList.add("selected");
+      item.style.background = "#f7f7f7";
+      if (check) { check.style.background = "var(--color-ink)"; check.style.borderColor = "var(--color-ink)"; check.innerHTML = '<span style="color:white;font-size:13px;font-weight:700;">✓</span>'; }
+      if (nameEl) nameEl.style.fontWeight = "600";
+      if (priceEl) priceEl.style.color = "var(--color-ink)";
     }
     updateIssueCount();
     updateView();
