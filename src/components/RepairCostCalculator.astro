@@ -578,6 +578,15 @@
       let priceText = "";
       if (issue.costType === "fabric_based") priceText = `~₹${fabricTotal.toLocaleString("en-IN")}`;
       else if (issue.costType === "sagging") priceText = `~₹${(fabricTotal + (seater?.totalFoamPrice || 0)).toLocaleString("en-IN")}`;
+      else if (issue.costType === "frame_based") {
+        let frameTotal = 0;
+        if (seater) {
+          for (const section of seater.sections) {
+            frameTotal += section.frameRate + section.foamPrice + section.labourCharges;
+          }
+        }
+        priceText = `~₹${frameTotal.toLocaleString("en-IN")}`;
+      }
       else priceText = `₹${issue.unitCost.toLocaleString("en-IN")}`;
 
       let qtyHTML = "";
@@ -673,7 +682,10 @@
       let details = "";
       if (item.fabricCost > 0) details += `Fabric: ₹${item.fabricCost.toLocaleString("en-IN")} `;
       if (item.foamCost > 0) details += `Foam: ₹${item.foamCost.toLocaleString("en-IN")} `;
-      if (item.unitCost > 0) details += `Parts: ₹${item.unitCost.toLocaleString("en-IN")} `;
+      if (item.unitCost > 0) {
+        const label = item.issueId === "frame_repair" ? "Frame + Foam:" : "Parts:";
+        details += `${label} ₹${item.unitCost.toLocaleString("en-IN")} `;
+      }
       if (item.labourCost > 0) details += `Labour: ₹${item.labourCost.toLocaleString("en-IN")}`;
       div.innerHTML = `<div class="breakdown-header"><span class="breakdown-name">${item.issueName}</span><span class="breakdown-total">₹${item.total.toLocaleString("en-IN")}</span></div><div class="breakdown-details">${details.trim()}</div>`;
       breakdownEl.appendChild(div);

@@ -39,6 +39,8 @@ export interface SectionConfig {
   label: string;
   meters: number;
   foamPrice: number;
+  frameRate: number;
+  labourCharges: number;
 }
 
 export interface SeaterConfig {
@@ -50,17 +52,17 @@ export interface SeaterConfig {
 }
 
 export const SEATER_CONFIGS: SeaterConfig[] = [
-  { code: "N1", sections: [{ label: "N1", meters: 8, foamPrice: 800 }], totalMeters: 8, totalFoamPrice: 800, labourCharges: 2000 },
-  { code: "N0", sections: [{ label: "N0", meters: 8, foamPrice: 800 }], totalMeters: 8, totalFoamPrice: 800, labourCharges: 2000 },
-  { code: "N2", sections: [{ label: "N2", meters: 10, foamPrice: 1800 }], totalMeters: 10, totalFoamPrice: 1800, labourCharges: 2500 },
-  { code: "N3", sections: [{ label: "N3", meters: 13, foamPrice: 2500 }], totalMeters: 13, totalFoamPrice: 2500, labourCharges: 3000 },
-  { code: "LRN3", sections: [{ label: "LRN3", meters: 13, foamPrice: 2500 }], totalMeters: 13, totalFoamPrice: 2500, labourCharges: 3000 },
-  { code: "N3LR", sections: [{ label: "N3LR", meters: 13, foamPrice: 2500 }], totalMeters: 13, totalFoamPrice: 2500, labourCharges: 3000 },
+  { code: "N1", sections: [{ label: "N1", meters: 8, foamPrice: 800, frameRate: 800, labourCharges: 2000 }], totalMeters: 8, totalFoamPrice: 800, labourCharges: 2000 },
+  { code: "N0", sections: [{ label: "N0", meters: 8, foamPrice: 800, frameRate: 800, labourCharges: 2000 }], totalMeters: 8, totalFoamPrice: 800, labourCharges: 2000 },
+  { code: "N2", sections: [{ label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 }], totalMeters: 10, totalFoamPrice: 1800, labourCharges: 2500 },
+  { code: "N3", sections: [{ label: "N3", meters: 13, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 }], totalMeters: 13, totalFoamPrice: 2500, labourCharges: 3000 },
+  { code: "LRN3", sections: [{ label: "LRN3", meters: 13, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 }], totalMeters: 13, totalFoamPrice: 2500, labourCharges: 3000 },
+  { code: "N3LR", sections: [{ label: "N3LR", meters: 13, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 }], totalMeters: 13, totalFoamPrice: 2500, labourCharges: 3000 },
   {
     code: "L3C",
     sections: [
-      { label: "Section", meters: 10, foamPrice: 2500 },
-      { label: "Chaise", meters: 7, foamPrice: 1500 },
+      { label: "Section", meters: 10, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 },
+      { label: "Chaise", meters: 7, foamPrice: 1500, frameRate: 1500, labourCharges: 2200 },
     ],
     totalMeters: 17,
     totalFoamPrice: 4000,
@@ -69,8 +71,8 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "R3C",
     sections: [
-      { label: "Section", meters: 10, foamPrice: 2500 },
-      { label: "Chaise", meters: 7, foamPrice: 1500 },
+      { label: "Section", meters: 10, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 },
+      { label: "Chaise", meters: 7, foamPrice: 1500, frameRate: 1500, labourCharges: 2200 },
     ],
     totalMeters: 17,
     totalFoamPrice: 4000,
@@ -79,8 +81,8 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "L2C",
     sections: [
-      { label: "Section", meters: 8, foamPrice: 2000 },
-      { label: "Chaise", meters: 7, foamPrice: 1500 },
+      { label: "Section", meters: 8, foamPrice: 2000, frameRate: 2000, labourCharges: 2800 },
+      { label: "Chaise", meters: 7, foamPrice: 1500, frameRate: 1500, labourCharges: 2200 },
     ],
     totalMeters: 15,
     totalFoamPrice: 3500,
@@ -89,8 +91,8 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "R2C",
     sections: [
-      { label: "Section", meters: 8, foamPrice: 2000 },
-      { label: "Chaise", meters: 7, foamPrice: 1500 },
+      { label: "Section", meters: 8, foamPrice: 2000, frameRate: 2000, labourCharges: 2800 },
+      { label: "Chaise", meters: 7, foamPrice: 1500, frameRate: 1500, labourCharges: 2200 },
     ],
     totalMeters: 15,
     totalFoamPrice: 3500,
@@ -99,9 +101,9 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "C22",
     sections: [
-      { label: "Corner", meters: 7, foamPrice: 2200 },
-      { label: "N2", meters: 10, foamPrice: 1800 },
-      { label: "N2", meters: 10, foamPrice: 1800 },
+      { label: "Corner", meters: 7, foamPrice: 2200, frameRate: 1500, labourCharges: 2200 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
     ],
     totalMeters: 27,
     totalFoamPrice: 5800,
@@ -110,9 +112,9 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "C23",
     sections: [
-      { label: "Corner", meters: 7, foamPrice: 2200 },
-      { label: "N2", meters: 10, foamPrice: 1800 },
-      { label: "N3", meters: 13, foamPrice: 2500 },
+      { label: "Corner", meters: 7, foamPrice: 2200, frameRate: 1500, labourCharges: 2200 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
+      { label: "N3", meters: 13, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 },
     ],
     totalMeters: 30,
     totalFoamPrice: 6500,
@@ -121,9 +123,9 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "C32",
     sections: [
-      { label: "Corner", meters: 7, foamPrice: 2200 },
-      { label: "N3", meters: 13, foamPrice: 2500 },
-      { label: "N2", meters: 10, foamPrice: 1800 },
+      { label: "Corner", meters: 7, foamPrice: 2200, frameRate: 1500, labourCharges: 2200 },
+      { label: "N3", meters: 13, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
     ],
     totalMeters: 30,
     totalFoamPrice: 6500,
@@ -132,8 +134,8 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "N22",
     sections: [
-      { label: "N2", meters: 10, foamPrice: 1800 },
-      { label: "N2", meters: 10, foamPrice: 1800 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
     ],
     totalMeters: 20,
     totalFoamPrice: 3600,
@@ -142,8 +144,8 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "N32",
     sections: [
-      { label: "N3", meters: 13, foamPrice: 2500 },
-      { label: "N2", meters: 10, foamPrice: 1800 },
+      { label: "N3", meters: 13, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
     ],
     totalMeters: 23,
     totalFoamPrice: 4300,
@@ -152,8 +154,8 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "N23",
     sections: [
-      { label: "N2", meters: 10, foamPrice: 1800 },
-      { label: "N3", meters: 13, foamPrice: 2500 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
+      { label: "N3", meters: 13, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 },
     ],
     totalMeters: 23,
     totalFoamPrice: 4300,
@@ -162,9 +164,9 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "N211",
     sections: [
-      { label: "N2", meters: 10, foamPrice: 1800 },
-      { label: "N1", meters: 8, foamPrice: 800 },
-      { label: "N1", meters: 8, foamPrice: 800 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
+      { label: "N1", meters: 8, foamPrice: 800, frameRate: 800, labourCharges: 2000 },
+      { label: "N1", meters: 8, foamPrice: 800, frameRate: 800, labourCharges: 2000 },
     ],
     totalMeters: 26,
     totalFoamPrice: 3400,
@@ -173,9 +175,9 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "N311",
     sections: [
-      { label: "N3", meters: 13, foamPrice: 2500 },
-      { label: "N1", meters: 8, foamPrice: 800 },
-      { label: "N1", meters: 8, foamPrice: 800 },
+      { label: "N3", meters: 13, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 },
+      { label: "N1", meters: 8, foamPrice: 800, frameRate: 800, labourCharges: 2000 },
+      { label: "N1", meters: 8, foamPrice: 800, frameRate: 800, labourCharges: 2000 },
     ],
     totalMeters: 29,
     totalFoamPrice: 4100,
@@ -184,9 +186,9 @@ export const SEATER_CONFIGS: SeaterConfig[] = [
   {
     code: "N321",
     sections: [
-      { label: "N3", meters: 13, foamPrice: 2500 },
-      { label: "N2", meters: 10, foamPrice: 1800 },
-      { label: "N1", meters: 8, foamPrice: 800 },
+      { label: "N3", meters: 13, foamPrice: 2500, frameRate: 2500, labourCharges: 3000 },
+      { label: "N2", meters: 10, foamPrice: 1800, frameRate: 1800, labourCharges: 2500 },
+      { label: "N1", meters: 8, foamPrice: 800, frameRate: 800, labourCharges: 2000 },
     ],
     totalMeters: 31,
     totalFoamPrice: 5100,
@@ -214,7 +216,7 @@ export interface IssueType {
   quantityLabel?: string;
   unitCost: number;
   labourCost: number;
-  costType: "fixed" | "fabric_based" | "sagging";
+  costType: "fixed" | "fabric_based" | "sagging" | "frame_based";
 }
 
 export const SOFA_ISSUES: IssueType[] = [
@@ -253,7 +255,7 @@ export const SOFA_ISSUES: IssueType[] = [
     hasQuantity: false,
     unitCost: 0,
     labourCost: 0,
-    costType: "fixed",
+    costType: "frame_based",
   },
   {
     id: "stitching_repair",
@@ -411,6 +413,14 @@ export function calculateRepairCost(
         fabricCost = fabricTotalCost;
         foamCost = totalFoamPrice;
         labourCost = seater?.labourCharges || 0;
+        break;
+      case "frame_based":
+        if (seater) {
+          for (const section of seater.sections) {
+            unitCost += section.frameRate + section.foamPrice;
+            labourCost += section.labourCharges;
+          }
+        }
         break;
       case "fixed":
         unitCost = issue.unitCost * qty;
