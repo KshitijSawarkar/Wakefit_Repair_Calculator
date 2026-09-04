@@ -221,6 +221,91 @@
   }
 
   .hidden { display: none !important; }
+
+  .summary-card {
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-hairline);
+    background: var(--color-elevated);
+  }
+
+  .summary-totals {
+    border-top: 1px solid var(--color-hairline);
+    padding-top: 0.75rem;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.375rem 0;
+  }
+
+  .summary-row-label {
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+
+  .summary-row-value {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0 0.25rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .summary-total-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .summary-total-value {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+  }
+
+  .breakdown-item {
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .breakdown-item:last-child { border-bottom: none; }
+
+  .breakdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .breakdown-name {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .breakdown-total {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .breakdown-details {
+    font-size: 0.6875rem;
+    color: var(--color-muted);
+    margin-top: 0.25rem;
+  }
 </style>
 
 <script>
@@ -590,7 +675,6 @@
       if (item.foamCost > 0) details += `Foam: ₹${item.foamCost.toLocaleString("en-IN")} `;
       if (item.unitCost > 0) details += `Parts: ₹${item.unitCost.toLocaleString("en-IN")} `;
       if (item.labourCost > 0) details += `Labour: ₹${item.labourCost.toLocaleString("en-IN")}`;
-      if (item.quantity > 1) details += ` ×${item.quantity}`;
       div.innerHTML = `<div class="breakdown-header"><span class="breakdown-name">${item.issueName}</span><span class="breakdown-total">₹${item.total.toLocaleString("en-IN")}</span></div><div class="breakdown-details">${details.trim()}</div>`;
       breakdownEl.appendChild(div);
     });
